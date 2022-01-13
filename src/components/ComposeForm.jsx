@@ -1,23 +1,28 @@
+import PropTypes from "prop-types";
 import { useState } from "react";
 import Avatar from "./Avatar";
 import "./ComposeForm.css";
 
-function ComposeForm() {
-  // As we've seen before, useState() returns an array
-  // of [getter, setter] that we can name as we want.
-  // We set the initial value of editorValue to an empty string.
+function ComposeForm({ onSubmit }) {
   const [editorValue, setEditorValue] = useState("");
 
-  // Before we return anything, we log the current value
-  console.log(editorValue);
-
-  // We define a handler for the onChange event of our textarea
   const handleEditorValueChange = (e) => {
     setEditorValue(e.target.value);
   };
 
+  const handleSubmit = (e) => {
+    // Prevent the default behavior of the form submition
+    // which usually triggers a page reload
+    e.preventDefault();
+    // Call the onSubmit function with the latest textarea value
+    onSubmit(editorValue);
+    // Reset the textarea content
+    // the user may wants to write another tweet
+    setEditorValue("");
+  };
+
   return (
-    <form className="compose-form">
+    <form className="compose-form" onSubmit={handleSubmit}>
       <div className="compose-form-container">
         <Avatar />
         <textarea
@@ -31,5 +36,11 @@ function ComposeForm() {
     </form>
   );
 }
+
+ComposeForm.propTypes = {
+  // Mind the isRequired flag,
+  // if we don't provide any function it will trhow an error
+  onSubmit: PropTypes.func.isRequired,
+};
 
 export default ComposeForm;
